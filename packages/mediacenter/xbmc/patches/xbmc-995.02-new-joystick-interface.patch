@@ -1,0 +1,42 @@
+diff -rupN xbmc-12.1_orig/xbmc/windowing/WinEventsX11.cpp xbmc-12.1/xbmc/windowing/WinEventsX11.cpp
+--- xbmc-12.1_orig/xbmc/windowing/WinEventsX11.cpp	2013-03-29 19:24:04.000000000 +0100
++++ xbmc-12.1/xbmc/windowing/WinEventsX11.cpp	2013-03-29 19:24:43.000000000 +0100
+@@ -40,9 +40,6 @@
+ #include <X11/extensions/Xrandr.h>
+ #endif
+ 
+-#ifdef HAS_SDL_JOYSTICK
+-#include "input/SDLJoystick.h"
+-#endif
+ 
+ CWinEventsX11* CWinEventsX11::WinEvents = 0;
+ 
+@@ -591,28 +588,6 @@ bool CWinEventsX11::MessagePump()
+   }
+ #endif
+ 
+-#ifdef HAS_SDL_JOYSTICK
+-  SDL_Event event;
+-  while (SDL_PollEvent(&event))
+-  {
+-    switch(event.type)
+-    {
+-      case SDL_JOYBUTTONUP:
+-      case SDL_JOYBUTTONDOWN:
+-      case SDL_JOYAXISMOTION:
+-      case SDL_JOYBALLMOTION:
+-      case SDL_JOYHATMOTION:
+-        g_Joystick.Update(event);
+-        ret = true;
+-        break;
+-
+-      default:
+-        break;
+-    }
+-    memset(&event, 0, sizeof(SDL_Event));
+-  }
+-#endif
+-
+   return ret;
+ }
+ 
