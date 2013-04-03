@@ -1,0 +1,12 @@
+diff -rupN xbmc-12.1.orig/xbmc/cores/AudioEngine/Engines/SoftAE/SoftAE.cpp xbmc-12.1/xbmc/cores/AudioEngine/Engines/SoftAE/SoftAE.cpp
+--- xbmc-12.1.orig/xbmc/cores/AudioEngine/Engines/SoftAE/SoftAE.cpp	2013-04-03 22:29:29.000000000 +0200
++++ xbmc-12.1/xbmc/cores/AudioEngine/Engines/SoftAE/SoftAE.cpp	2013-04-03 22:41:51.000000000 +0200
+@@ -1533,7 +1533,7 @@ inline void CSoftAE::ProcessSuspend()
+      * Note: It is not enough to check the streams buffer, cause it might not be filled yet
+      * We have to check after ProcessSuspending() if the sink is still in softsleep and resume it
+      */
+-    if (!m_isSuspended && (!m_playingStreams.empty() || !m_playing_sounds.empty()))
++    if (m_sink && !m_isSuspended && (!m_playingStreams.empty() || !m_playing_sounds.empty()))
+     {
+       m_reOpen = !m_sink->SoftResume() || m_reOpen; // sink returns false if it requires reinit (worthless with current implementation)
+       m_sinkIsSuspended = false; //sink processing data

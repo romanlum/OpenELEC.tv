@@ -1,0 +1,44 @@
+diff -rupN xbmc-12.1.orig/xbmc/cores/RetroPlayer/RetroPlayerVideo.cpp xbmc-12.1/xbmc/cores/RetroPlayer/RetroPlayerVideo.cpp
+--- xbmc-12.1.orig/xbmc/cores/RetroPlayer/RetroPlayerVideo.cpp	2013-04-03 22:29:29.000000000 +0200
++++ xbmc-12.1/xbmc/cores/RetroPlayer/RetroPlayerVideo.cpp	2013-04-03 22:37:58.000000000 +0200
+@@ -133,10 +133,27 @@ void CRetroPlayerVideo::Process()
+       CLog::Log(LOGERROR, "RetroPlayerVideo: Renderer not started, bailing");
+       break;
+     }
+-
+-    int index = g_renderManager.AddVideoPicture(*pPicture);
+-    (void)index; // disable warning
+-    g_renderManager.FlipPage(CThread::m_bStop);
++	
++	int count=0;
++	int buffer = g_renderManager.WaitForBuffer(m_bStop);
++	// Max wait 500 msec for the buffer
++    while(buffer < 0 && !m_bStop && count < 500)
++    {
++        Sleep(1);
++        buffer = g_renderManager.WaitForBuffer(m_bStop);
++        count++;
++    }
++	
++    if (buffer > 0)
++    {
++        int index = g_renderManager.AddVideoPicture(*pPicture);
++        (void)index; // disable warning
++        g_renderManager.FlipPage(CThread::m_bStop);
++    }
++	else
++	{
++		CLog::Log(LOGWARNING,"RetroplayerVideo: Skipping frame");
++	}
+     CDVDCodecUtils::FreePicture(pPicture);
+     pPicture = NULL;
+   }
+@@ -181,7 +198,7 @@ bool CRetroPlayerVideo::CheckConfigurati
+ 
+     CLog::Log(LOGDEBUG, "RetroPlayerVideo: Change configuration: %dx%d, %4.2f fps", picture.iWidth, picture.iHeight, framerate);
+     int orientation = 0; // (90 = 5, 180 = 2, 270 = 7), if we ever want to use RETRO_ENVIRONMENT_SET_ROTATION
+-    if (!g_renderManager.Configure(picture.iWidth, picture.iHeight, picture.iDisplayWidth, picture.iDisplayHeight, (float)framerate, flags, picture.format, picture.extended_format, orientation))
++    if (!g_renderManager.Configure(picture.iWidth, picture.iHeight, picture.iDisplayWidth, picture.iDisplayHeight, (float)framerate, flags, picture.format, picture.extended_format, orientation,true))
+     {
+       CLog::Log(LOGERROR, "RetroPlayerVideo: Failed to configure renderer");
+       return false;
