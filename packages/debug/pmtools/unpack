@@ -2,7 +2,7 @@
 
 ################################################################################
 #      This file is part of OpenELEC - http://www.openelec.tv
-#      Copyright (C) 2009-2012 Stephan Raue (stephan@openelec.tv)
+#      Copyright (C) 2013 Dag Wieers (dag@wieers.com)
 #
 #  This Program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -22,18 +22,4 @@
 
 . config/options $1
 
-setup_toolchain host
-
-cd $PKG_BUILD
-./configure --host=$HOST_NAME \
-            --build=$HOST_NAME \
-            --target=$TARGET_NAME \
-            --prefix=$ROOT/$TOOLCHAIN \
-            --enable-shared \
-            --disable-static \
-            --disable-rpath \
-            --with-gnu-ld \
-            --without-emacs
-
-make
-make install
+mv $BUILD/$PKG_NAME $BUILD/$PKG_NAME-$PKG_VERSION
